@@ -10,7 +10,9 @@ const port = process.env.PORT || 4000;
 connectdb();
 app.use(express.json());
 app.use(cookieParser());
-const allowedOrigins = ["https://authentication-system-xbhc.onrender.com"];
+const allowedOrigins = [
+  "https://authentication-system-frontend-y8d9.onrender.com/",
+];
 app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.get("/", (req, res) => {
   res.send("API working");
