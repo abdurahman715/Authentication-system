@@ -2,6 +2,10 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import userModel from "../models/userModel.js";
 import transporter from "../config/nodeMailer.js";
+import {
+  EMAIL_VERIFY_TEMPLATE,
+  PASSWORD_RESET_TEMPLATE,
+} from "../config/emailTemplates.js";
 //Registration
 export const register = async (req, res) => {
   const { name, email, password } = req.body;
@@ -102,7 +106,11 @@ export const sendVerifyOtp = async (req, res) => {
       from: process.env.SENDER_EMAIL,
       to: user.email,
       subject: "Account verification OTP",
-      text: `Your OTP is ${otp}.Verify your account using this otp`,
+      // text: `Your OTP is ${otp}.Verify your account using this otp`,
+      html: EMAIL_VERIFY_TEMPLATE.replace("{{otp}}", otp).replace(
+        "{{email}}",
+        user.email,
+      ),
     };
     await transporter.sendMail(mailOptions);
     res.json({ success: true, message: "Verification OTP Sent On Email" });
@@ -167,7 +175,11 @@ export const sendResetOTP = async (req, res) => {
       from: process.env.SENDER_EMAIL,
       to: user.email,
       subject: "Password reset OTP",
-      text: `Your OTP fro resetting your password is ${otp}.Use this otp to proceed with resetting your password`,
+      // text: `Your OTP for resetting your password is ${otp}.Use this otp to proceed with resetting your password`,
+      html: PASSWORD_RESET_TEMPLATE.replace("{{otp}}", otp).replace(
+        "{{email}}",
+        user.email,
+      ),
     };
     await transporter.sendMail(mailOptions);
     return res.json({ success: true, message: "OTP sent to your email" });
@@ -178,7 +190,7 @@ export const sendResetOTP = async (req, res) => {
 //Reset user password
 export const resetPassword = async (req, res) => {
   const { email, otp, newPassword } = req.body;
-  if (!email || !otp || !password) {
+  if (!email || !otp || !newPassword) {
     return res.json({
       success: false,
       message: "Email,otp,and newPassword are reuired",
