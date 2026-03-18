@@ -11,7 +11,7 @@ connectdb();
 app.use(express.json());
 app.use(cookieParser());
 const allowedOrigins = [
-  "https://authentication-system-frontend-y8d9.onrender.com/",
+  "https://authentication-system-frontend-y8d9.onrender.com",
 ];
 app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.get("/", (req, res) => {
